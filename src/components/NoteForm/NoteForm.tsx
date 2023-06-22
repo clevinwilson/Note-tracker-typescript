@@ -1,12 +1,33 @@
 import CreatableSelect from 'react-select/creatable';
-import { Link } from 'react-router-dom';
-import {useRef} from 'react';
-function NoteForm() {
+import { Link, useNavigate } from 'react-router-dom';
+import {useRef,useState} from 'react';
+import { NoteData, Tag } from '../../App';
+import { v4 as uuidv4 } from 'uuid';
+
+type NoteFormProps={
+  onSubmit:(data:NoteData)=>void
+  onAddTag: (tag: Tag) => void
+  availableTags: Tag[]
+}
+
+
+function NoteForm({ onSubmit, onAddTag,availableTags}:NoteFormProps) {
   const titleRef=useRef<HTMLInputElement>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const [selectedTags,setSelectedTags]=useState<Tag[]>([])
+  const navigate=useNavigate();
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>){
     event.preventDefault();
+    
+
+    onSubmit({
+      title:titleRef.current!.value,
+      markdown:textAreaRef.current!.value,
+      tags:selectedTags
+    })
+
+    navigate('..')
   }
 
 
@@ -20,7 +41,7 @@ function NoteForm() {
             <label className="block  tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
               Title
             </label>
-            <input ref={titleRef} className="appearance-none block w-full  text-gray-700 border  rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Title" />
+            <input ref={titleRef} className="appearance-none block w-full  text-gray-700 border  rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Title" required />
           </div>
 
           {/* tags */}
@@ -28,6 +49,22 @@ function NoteForm() {
             <div>
               <label htmlFor="countries" className="block mb-2 text-sm font-medium text-gray-900 ">Tags</label>
               <CreatableSelect
+              onCreateOption={label=>{
+                const newTag={id:uuidv4(),label};
+                onAddTag(newTag);
+                setSelectedTags(prev=>[...prev,newTag]);
+              }}
+
+               value={selectedTags?.map(tag=>{
+                return{label:tag.label,value:tag.id};
+               })}
+
+               onChange={tags=>{
+                setSelectedTags(tags.map(tag=>{
+                  return{label:tag.label,id:tag.value};
+                }))
+               }}
+
                 isMulti
               />
             </div>
@@ -40,7 +77,7 @@ function NoteForm() {
             <label className="block  tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-password">
               Body
             </label>
-            <textarea ref={textAreaRef} id="message" rows={15} className="block p-2.5 w-full  text-sm text-gray-900 bg-gray-50 rounded-lg border  " placeholder="Write your thoughts here..." defaultValue={""} />
+            <textarea ref={textAreaRef} id="message" rows={15} className="block p-2.5 w-full  text-sm text-gray-900 bg-gray-50 rounded-lg border  " placeholder="Write your thoughts here..." defaultValue={""} required/>
           </div>
         </div>
 
