@@ -1,16 +1,30 @@
 import ReactSelect from 'react-select';
-import { useRef, useState } from 'react';
-import { NoteData, Tag } from '../../App';
+import { useMemo, useState } from 'react';
+import { Note, NoteData, Tag } from '../../App';
 import NoteCard from '../NoteCard/NoteCard';
 
 type NoteFormProps = {
   availableTags: Tag[]
-  noteWithTags:NoteData[]
+  noteWithTags:Note[]
 }
 
 function List({ availableTags, noteWithTags }: NoteFormProps) {
   const [title, setTitle] = useState("");
-  const [selectedTags, setSelectedTags] = useState<Tag[]>([])
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+
+
+  const filteredNotes = useMemo(() => {
+    return noteWithTags.filter(note => {
+      return (
+        (title === "" ||
+          note.title.toLowerCase().includes(title.toLowerCase())) &&
+        (selectedTags.length === 0 ||
+          selectedTags.every(tag =>
+            note.tags.some(noteTag => noteTag.id === tag.id)
+          ))
+      )
+    })
+  }, [title, selectedTags, noteWithTags])
 
 
   return (
@@ -54,9 +68,7 @@ function List({ availableTags, noteWithTags }: NoteFormProps) {
 
       <div className="mx-auto container py-20 px-6">
         <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6">
-          {noteWithTags.map((note)=>{
-            console.log(note);
-            
+          {filteredNotes.map((note)=>{
             return(
               <NoteCard id={note.id} title={note.title} tags={note.tags} />
             )
