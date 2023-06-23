@@ -60,7 +60,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<NoteList availableTags={tags} />} />
+        <Route path="/" element={<NoteList availableTags={tags} noteWithTags={noteWithTags} />} />
         <Route path="/new" element={<NewNote onSubmit={onCreateNote} onAddTag={addTag} availableTags={tags}/>} />
         <Route path="/:id" >
           <Route index element={<h1>Show</h1>} />

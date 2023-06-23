@@ -5,9 +5,10 @@ import NoteCard from '../NoteCard/NoteCard';
 
 type NoteFormProps = {
   availableTags: Tag[]
+  noteWithTags:NoteData[]
 }
 
-function List({ availableTags }: NoteFormProps) {
+function List({ availableTags, noteWithTags }: NoteFormProps) {
   const [title, setTitle] = useState("");
   const [selectedTags, setSelectedTags] = useState<Tag[]>([])
 
@@ -53,7 +54,14 @@ function List({ availableTags }: NoteFormProps) {
 
       <div className="mx-auto container py-20 px-6">
         <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6">
-          <NoteCard/>
+          {noteWithTags.map((note)=>{
+            console.log(note);
+            
+            return(
+              <NoteCard id={note.id} title={note.title} tags={note.tags} />
+            )
+          })}
+
           
         </div>
       </div>

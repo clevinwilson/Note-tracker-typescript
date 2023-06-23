@@ -4,9 +4,10 @@ import { NoteData, Tag } from '../../App';
 
 type NoteFormProps = {
   availableTags: Tag[]
+  noteWithTags:NoteData[]
 }
 
-function NoteList({ availableTags }: NoteFormProps) {
+function NoteList({ availableTags, noteWithTags }: NoteFormProps) {
   return (
     <div>
       <div className='grid grid-cols-12'>
@@ -20,7 +21,7 @@ function NoteList({ availableTags }: NoteFormProps) {
           </button>
         </div>
       </div>
-      <List availableTags={availableTags} />
+      <List availableTags={availableTags} noteWithTags={noteWithTags} />
     </div>
   )
 }
