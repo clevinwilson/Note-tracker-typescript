@@ -2,10 +2,11 @@ import ReactSelect from 'react-select';
 import { useMemo, useState } from 'react';
 import { Note, NoteData, Tag } from '../../App';
 import NoteCard from '../NoteCard/NoteCard';
+import swal from 'sweetalert';
 
 type NoteFormProps = {
   availableTags: Tag[]
-  noteWithTags:Note[]
+  noteWithTags: Note[]
 }
 
 function List({ availableTags, noteWithTags }: NoteFormProps) {
@@ -24,7 +25,24 @@ function List({ availableTags, noteWithTags }: NoteFormProps) {
           ))
       )
     })
-  }, [title, selectedTags, noteWithTags])
+  }, [title, selectedTags, noteWithTags]);
+
+  //deleting notes
+  function deleteNote(id: string) {
+    swal({
+      title: "Are you sure?",
+      text: "Once deleted, you will not be able to recover this file!",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    })
+      .then((willDelete) => {
+        if (willDelete) {
+          const newNotes=noteWithTags.filter((note) => note.id === id ? false : true)
+          localStorage.setItem('NOTES', JSON.stringify(newNotes));
+        }
+      });
+  }
 
 
   return (
@@ -68,13 +86,11 @@ function List({ availableTags, noteWithTags }: NoteFormProps) {
 
       <div className="mx-auto container py-20 px-6">
         <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6">
-          {filteredNotes.map((note)=>{
-            return(
-              <NoteCard id={note.id} title={note.title} tags={note.tags} />
+          {filteredNotes.map((note) => {
+            return (
+              <NoteCard id={note.id} title={note.title} tags={note.tags} deleteNote={deleteNote} />
             )
           })}
-
-          
         </div>
       </div>
     </div>
